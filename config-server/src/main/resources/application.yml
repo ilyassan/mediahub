@@ -1,6 +1,14 @@
 spring:
   application:
-    name: config-server   # The unique name of this service in the ecosystem
+    name: config-server
 
 server:
-  port: 8888   # 8888 is the standard default port for Spring Cloud Config Server
+  port: 8888
+
+eureka:
+  client:
+    service-url:
+      # Point to the Eureka Server so this service can register itself there
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
