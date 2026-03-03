@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: config-server   # The unique name of this service in the ecosystem
+
+server:
+  port: 8888   # 8888 is the standard default port for Spring Cloud Config Server

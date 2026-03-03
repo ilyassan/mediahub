@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: user-service   # This name is what other services use to call this service (no hardcoded IP)
+
+server:
+  port: 8081

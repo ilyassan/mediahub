@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: discovery-server   # The unique name of this service in the ecosystem
+
+server:
+  port: 8761   # 8761 is the standard default port for Eureka — do not change it
