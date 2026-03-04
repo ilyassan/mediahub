@@ -4,9 +4,6 @@ WORKDIR /app
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
 
-# Copy ALL module pom.xml files — Maven needs them all to understand
-# the multi-module structure declared in the root pom.xml <modules> section.
-# Without this, Maven throws "Child module does not exist".
 COPY discovery-server/pom.xml discovery-server/
 COPY config-server/pom.xml config-server/
 COPY user-service/pom.xml user-service/
