@@ -25,8 +25,7 @@ public class User {
     @NotBlank
     @Column(unique = true)
     private String email;
-
-    // Stored as a string in the DB ("USER" or "ADMIN"), not a number
+    
     @Enumerated(EnumType.STRING)
     private Role role;
 }

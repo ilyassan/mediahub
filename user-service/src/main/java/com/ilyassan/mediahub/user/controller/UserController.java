@@ -19,33 +19,38 @@ public class UserController {
 
     private final UserService userService;
 
-    // GET /users
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    // GET /users/{id}
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    // POST /users
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id,
+                                              @Valid @RequestBody UserRequest request) {
+        return ResponseEntity.ok(userService.updateUser(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
     }
 
-    // GET /users/{id}/subscription
-    // Example of inter-service call via OpenFeign — calls subscription-service
     @GetMapping("/{id}/subscription")
     public ResponseEntity<SubscriptionDto> getUserSubscription(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserSubscription(id));
     }
 
-    // GET /users/media
-    // Example of inter-service call via WebClient — calls media-service reactively
     @GetMapping("/media")
     public ResponseEntity<List<?>> getAvailableMedia() {
         return ResponseEntity.ok(userService.getAvailableMedia());
