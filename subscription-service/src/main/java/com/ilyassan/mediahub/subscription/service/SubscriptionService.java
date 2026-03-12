@@ -1,5 +1,9 @@
 package com.ilyassan.mediahub.subscription.service;
 
+import java.time.LocalDate;
+
+import org.springframework.stereotype.Service;
+
 import com.ilyassan.mediahub.subscription.client.MediaClient;
 import com.ilyassan.mediahub.subscription.dto.MediaDto;
 import com.ilyassan.mediahub.subscription.dto.SubscriptionDto;
@@ -7,17 +11,15 @@ import com.ilyassan.mediahub.subscription.dto.SubscriptionRequest;
 import com.ilyassan.mediahub.subscription.entity.Subscription;
 import com.ilyassan.mediahub.subscription.enums.SubscriptionStatus;
 import com.ilyassan.mediahub.subscription.repository.SubscriptionRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
-    private final MediaClient mediaClient; // OpenFeign client → media-service
+    private final MediaClient mediaClient;
 
     public SubscriptionDto createSubscription(SubscriptionRequest request) {
         Subscription subscription = Subscription.builder()
@@ -36,9 +38,8 @@ public class SubscriptionService {
         return toDto(subscription);
     }
 
-    // Example of inter-service call: subscription-service → media-service via Feign
     public MediaDto getMediaDetails(Long mediaId) {
-        return mediaClient.getMediaById(mediaId);
+        return mediaClient.getMediaById(mediaId).getData();
     }
 
     private SubscriptionDto toDto(Subscription s) {
