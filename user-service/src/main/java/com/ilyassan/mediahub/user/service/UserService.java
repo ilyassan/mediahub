@@ -4,18 +4,24 @@ import com.ilyassan.mediahub.user.client.SubscriptionClient;
 import com.ilyassan.mediahub.user.dto.SubscriptionDto;
 import com.ilyassan.mediahub.user.dto.UserDto;
 import com.ilyassan.mediahub.user.dto.UserRequest;
+import com.ilyassan.mediahub.user.dto.ViewingHistoryDto;
+import com.ilyassan.mediahub.user.dto.ViewingHistoryRequest;
 import com.ilyassan.mediahub.user.entity.User;
+import com.ilyassan.mediahub.user.entity.ViewingHistory;
 import com.ilyassan.mediahub.user.repository.UserRepository;
+import com.ilyassan.mediahub.user.repository.ViewingHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ViewingHistoryRepository viewingHistoryRepository;
     private final SubscriptionClient subscriptionClient;
     private final WebClient webClient;
 
@@ -71,6 +77,36 @@ public class UserService {
                 .bodyToFlux(Object.class)
                 .collectList()
                 .block();
+    }
+
+    public ViewingHistoryDto addToHistory(Long userId, ViewingHistoryRequest request) {
+        if (!userRepository.existsById(userId)) {
+            throw new RuntimeException("User not found with id: " + userId);
+        }
+        ViewingHistory history = ViewingHistory.builder()
+                .userId(userId)
+                .mediaId(request.getMediaId())
+                .build();
+        return toHistoryDto(viewingHistoryRepository.save(history));
+    }
+
+    public List<ViewingHistoryDto> getViewingHistory(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new RuntimeException("User not found with id: " + userId);
+        }
+        return viewingHistoryRepository.findByUserId(userId)
+                .stream()
+                .map(this::toHistoryDto)
+                .toList();
+    }
+
+    private ViewingHistoryDto toHistoryDto(ViewingHistory h) {
+        return ViewingHistoryDto.builder()
+                .id(h.getId())
+                .userId(h.getUserId())
+                .mediaId(h.getMediaId())
+                .watchedAt(h.getWatchedAt())
+                .build();
     }
 
     private UserDto toDto(User user) {

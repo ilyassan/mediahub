@@ -3,6 +3,8 @@ package com.ilyassan.mediahub.user.controller;
 import com.ilyassan.mediahub.user.dto.SubscriptionDto;
 import com.ilyassan.mediahub.user.dto.UserDto;
 import com.ilyassan.mediahub.user.dto.UserRequest;
+import com.ilyassan.mediahub.user.dto.ViewingHistoryDto;
+import com.ilyassan.mediahub.user.dto.ViewingHistoryRequest;
 import com.ilyassan.mediahub.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,5 +56,16 @@ public class UserController {
     @GetMapping("/media")
     public ResponseEntity<List<?>> getAvailableMedia() {
         return ResponseEntity.ok(userService.getAvailableMedia());
+    }
+
+    @PostMapping("/{id}/history")
+    public ResponseEntity<ViewingHistoryDto> addToHistory(@PathVariable Long id,
+                                                          @Valid @RequestBody ViewingHistoryRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.addToHistory(id, request));
+    }
+
+    @GetMapping("/{id}/history")
+    public ResponseEntity<List<ViewingHistoryDto>> getViewingHistory(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getViewingHistory(id));
     }
 }

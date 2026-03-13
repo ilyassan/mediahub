@@ -3,17 +3,12 @@ WORKDIR /app
 
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
-
-COPY discovery-server/pom.xml discovery-server/
-COPY config-server/pom.xml config-server/
-COPY user-service/pom.xml user-service/
-COPY media-service/pom.xml media-service/
 COPY subscription-service/pom.xml subscription-service/
 
-RUN ./mvnw dependency:go-offline -pl subscription-service -am
+RUN ./mvnw dependency:go-offline -f subscription-service/pom.xml
 
 COPY subscription-service/src subscription-service/src
-RUN ./mvnw package -pl subscription-service -am -DskipTests
+RUN ./mvnw package -f subscription-service/pom.xml -DskipTests
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app

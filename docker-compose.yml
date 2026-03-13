@@ -80,10 +80,10 @@ services:
     environment:
       # Override the Eureka URL to use the Docker service name instead of localhost
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
-      # Override the Config Server URL to use the Docker service name
       SPRING_CONFIG_IMPORT: "optional:configserver:http://config-server:8888"
-      # Override the datasource URL to use the Docker service name
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/userdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
 
   media-service:
     build:
@@ -103,6 +103,8 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
       SPRING_CONFIG_IMPORT: "optional:configserver:http://config-server:8888"
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mediadb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
 
   subscription-service:
     build:
@@ -122,6 +124,26 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
       SPRING_CONFIG_IMPORT: "optional:configserver:http://config-server:8888"
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/subscriptiondb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+
+  # ──────────────────────────────────────────────
+  # STEP 4: API Gateway — single entry point for all clients
+  # ──────────────────────────────────────────────
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
 
 volumes:
   postgres_data:
